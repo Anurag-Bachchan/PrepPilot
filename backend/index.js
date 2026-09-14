@@ -12,7 +12,7 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", "https://prep-pilot-phi.vercel.app/"
     credentials: true//it allows the server to accept requests from the frontend with cookies
 }))
 const PORT=process.env.PORT || 5000
