@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api=axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://preppilot-5wpd.onrender.com" : "http://localhost:3000"),
     withCredentials: true,//it makes sure that the cookies are sent with the request
 })
 

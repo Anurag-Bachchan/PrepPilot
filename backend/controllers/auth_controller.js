@@ -62,8 +62,12 @@ async function LoginUser(req,res){
 
     const token=jwt.sign({id:registeredUser._id, username:registeredUser.username},process.env.JWT_SECRET,{expiresIn:"1d"})//creating a token for the user
 
-    res.cookie("token",token,{ //setting the token in the cookie 
+    const isProduction=process.env.NODE_ENV === "production"
+
+    res.cookie("token",token,{ //setting the token in the cookie
         httpOnly:true,
+        secure:isProduction,//cookie only sent over HTTPS in production
+        sameSite:isProduction ? "none" : "lax",//"none" allows the cookie to be sent cross-domain (frontend and backend on different domains in production)
         maxAge:24*60*60*1000//1 day
     })
 
@@ -88,7 +92,13 @@ async function LogoutUser(req,res){
 
     await tokenBlacklistModel.create({token})//adding the token to the blacklist
 
-    res.clearCookie("token")//clearing the cookie 
+    const isProduction=process.env.NODE_ENV === "production"
+
+    res.clearCookie("token",{ //must match the options used when the cookie was set, otherwise the browser won't clear it
+        httpOnly:true,
+        secure:isProduction,
+        sameSite:isProduction ? "none" : "lax"
+    })
 
     res.status(200).json({
         message:"User logged out successfully"
